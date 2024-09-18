@@ -3,16 +3,19 @@ package expenses
 import (
 	"budgetme/models"
 	"budgetme/sqldb" // Assuming you have sqldb for fetching expenses
+	"budgetme/utils"
 	"fmt"
-	"strings"
+	"sort"
+	"strconv"
+	"time"
 
 	"github.com/spf13/cobra"
 )
 
 // categories slice to hold the passed categories from the user
 var (
-	format     string
-	categories []string
+	groupBy string
+	grouped map[string][]models.Expense
 )
 
 // reportCmd represents the report command
@@ -20,64 +23,101 @@ var reportCmd = &cobra.Command{
 	Use:   "report",
 	Short: "Generate a report of expenses per category",
 	Run: func(cmd *cobra.Command, args []string) {
-		// Initialize DB
-		db, err := sqldb.InitDB()
-		if err != nil {
-			fmt.Println("Failed to initialize the database:", err)
-			return
-		}
-		defer db.Close()
-
 		// Fetch expenses from the database
-		expenses, err := sqldb.FetchExpenses(db, "id", "asc")
+		expenses, err := sqldb.FetchExpenses(db, "date", "asc")
 		if err != nil {
 			fmt.Println("Error fetching expenses:", err)
 			return
 		}
 
-		outputTotalperCategory(expenses)
+		switch groupBy {
+		case "month":
+			grouped = groupByMonth(expenses)
+		case "week":
+			grouped = groupByWeek(expenses)
+		default:
+			grouped = groupByYear(expenses)
+		}
 
+		intervals := make([]string, 0, len(grouped))
+
+		for interval := range grouped {
+			intervals = append(intervals, interval)
+		}
+		sort.Strings(intervals)
+
+		// Iterate through the sorted intervals
+		for _, interval := range intervals {
+			exps := grouped[interval]
+			var total float64
+
+			fmt.Println("Time: ", interval)
+			fmt.Println("----------------------------------------------")
+			utils.PrintExpenses(exps)
+
+			for _, exp := range exps {
+				total += exp.Amount
+			}
+
+			fmt.Printf("Total: %.2f\n", total)
+			fmt.Println()
+		}
 	},
 }
 
-func outputTotalperCategory(expenses []models.Expense) {
-	categorySums := make(map[string]float64)
-	if len(categories) > 0 {
-		fmt.Println("Showing data for the following categories:", strings.Join(categories, ", "))
-		for _, exp := range expenses {
-			if containsCategory(exp.Category, categories) {
-				categorySums[exp.Category] += exp.Amount
-			}
-		}
-	} else {
-		// If no categories are specified, sum all categories
-		fmt.Println("Showing data for all categories")
-		for _, exp := range expenses {
-			categorySums[exp.Category] += exp.Amount
-		}
+func groupByYear(expenses []models.Expense) map[string][]models.Expense {
+	grouped := make(map[string][]models.Expense)
+	for _, expense := range expenses {
+		year := strconv.Itoa(expense.Date.Year()) // Extract the year from Date
+		grouped[year] = append(grouped[year], expense)
 	}
-
-	// Print the result
-	fmt.Printf("%-15s %-10s\n", "Category", "Total")
-	fmt.Println("------------------------------")
-	for category, total := range categorySums {
-		fmt.Printf("%-15s %-10.2f\n", category, total)
-	}
+	return grouped
 }
 
-func containsCategory(category string, selectedCategories []string) bool {
-	for _, c := range selectedCategories {
-		if category == c {
-			return true
-		}
+// Group expenses by month (Year and Month)
+func groupByMonth(expenses []models.Expense) map[string][]models.Expense {
+	grouped := make(map[string][]models.Expense)
+	for _, expense := range expenses {
+		yearMonth := expense.Date.Format("2006-01") // Format the Date as "YYYY-MM"
+		grouped[yearMonth] = append(grouped[yearMonth], expense)
 	}
-	return false
+	return grouped
+}
+
+// Group expenses by week (Year and Week number)
+func groupByWeek(expenses []models.Expense) map[string][]models.Expense {
+	grouped := make(map[string][]models.Expense)
+
+	for _, expense := range expenses {
+		// Find the start of the week (Monday)
+		startOfWeek := getStartOfWeek(expense.Date)
+
+		// Calculate the end of the week (Sunday)
+		endOfWeek := startOfWeek.AddDate(0, 0, 6) // Add 6 days to get the end of the week
+
+		// Format as "YYYY-MM-DD - YYYY-MM-DD"
+		yearWeek := fmt.Sprintf("%s to %s", startOfWeek.Format("2006-01-02"), endOfWeek.Format("2006-01-02"))
+
+		// Group expenses by this week range
+		grouped[yearWeek] = append(grouped[yearWeek], expense)
+	}
+
+	return grouped
+}
+
+func getStartOfWeek(date time.Time) time.Time {
+	// Subtract the day of the week (Monday=1, ..., Sunday=7) minus 1 to get back to Monday
+	offset := int(time.Monday - date.Weekday())
+	if offset > 0 {
+		offset = -6 // Adjust for when date is on Sunday (Weekday = 0)
+	}
+	startOfWeek := date.AddDate(0, 0, offset)
+	return startOfWeek
 }
 
 func init() {
 	// Add the --categories flag to the report command
-	reportCmd.Flags().StringSliceVarP(&categories, "categories", "c", []string{}, "Filter by specific categories (comma-separated)")
-	reportCmd.Flags().StringVarP(&format, "format", "f", "table", "Output format (table, json, csv)")
+	reportCmd.Flags().StringVarP(&groupBy, "groupBy", "g", "year", "Group expenses by (year, month, week)")
 
 	// Add the report command to the expenses command
 	ExpensesCmd.AddCommand(reportCmd)

@@ -50,7 +50,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.CLI.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/config_files/defaultconfig.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -61,23 +61,24 @@ func init() {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	if cfgFile != "" {
-		// Use config file from the flag.
+		// Use config file from the flag
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
 		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		// Search config in home directory with name ".CLI" (without extension).
-		viper.AddConfigPath(home)
+		if err != nil {
+			fmt.Println("Error getting home dir: ", err)
+			return
+		}
+		path := fmt.Sprintf("%s\\Desktop\\BudgetMe\\config_files", home)
+		viper.AddConfigPath(path)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".CLI")
+		viper.SetConfigName("defaultconfig") // or ".config" if you're looking for .config.yaml
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Println("error reading config file: ", err)
+		return
 	}
 }

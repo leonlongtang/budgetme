@@ -1,6 +1,3 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package expenses
 
 import (
@@ -10,9 +7,14 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var db *sql.DB
+var (
+	db        *sql.DB
+	direction string
+	orderBy   string
+)
 
 // expensesCmd represents the expenses command
 var ExpensesCmd = &cobra.Command{
@@ -29,6 +31,8 @@ var ExpensesCmd = &cobra.Command{
 			fmt.Println("Failed to initialize the database:", err)
 			os.Exit(1)
 		}
+		direction = viper.GetString("direction")
+		orderBy = viper.GetString("order_by")
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		if db != nil {

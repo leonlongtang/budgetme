@@ -3,6 +3,8 @@ package sqldb
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	"time"
 
 	"budgetme/models"
 
@@ -65,13 +67,19 @@ func FetchExpenses(db *sql.DB, orderBy string, orderDirection string) ([]models.
 
 	for rows.Next() {
 		var exp models.Expense
+		var dateStr string
 
-		err := rows.Scan(&exp.ID, &exp.Amount, &exp.Category, &exp.Date)
+		err := rows.Scan(&exp.ID, &exp.Amount, &exp.Category, &dateStr)
 		if err != nil {
 			fmt.Printf("Error scanning row: %v", err)
 			continue
 		}
 
+		exp.Date, err = time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			fmt.Println("Error parsing date:", err)
+			os.Exit(1)
+		}
 		expenses = append(expenses, exp)
 	}
 
