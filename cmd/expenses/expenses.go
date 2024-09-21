@@ -22,7 +22,12 @@ var ExpensesCmd = &cobra.Command{
 	Short: "Handling Expenses",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		err := cmd.Help()
+		if err != nil {
+			// You can either log the error or handle it in some meaningful way
+			fmt.Println("Error displaying help:", err)
+		}
+
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		var err error

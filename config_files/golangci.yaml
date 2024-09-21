@@ -1,0 +1,17 @@
+linters:
+  enable:
+    - govet
+    - gofmt
+    - staticcheck
+    - errcheck
+    - ineffassign
+    - unused
+    - goconst
+    - unparam
+    - gosimple
+    - dupl
+    - gocyclo
+
+run:
+  timeout: 5m
+  tests: true
