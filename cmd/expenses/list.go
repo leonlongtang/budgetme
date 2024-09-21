@@ -4,8 +4,6 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package expenses
 
 import (
-	"fmt"
-
 	"budgetme/sqldb"
 	"budgetme/utils"
 
@@ -20,7 +18,7 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		expenses, err := sqldb.FetchExpenses(db, orderBy, direction)
 		if err != nil {
-			fmt.Println("Error fetching expenses", err)
+			log.Error("Error fetching expenses", err)
 			return
 		}
 		utils.PrintExpenses(expenses)

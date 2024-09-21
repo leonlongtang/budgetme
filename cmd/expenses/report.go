@@ -26,7 +26,7 @@ var reportCmd = &cobra.Command{
 		// Fetch expenses from the database
 		expenses, err := sqldb.FetchExpenses(db, "date", "asc")
 		if err != nil {
-			fmt.Println("Error fetching expenses:", err)
+			log.Error("Error fetching expenses:", err)
 			return
 		}
 

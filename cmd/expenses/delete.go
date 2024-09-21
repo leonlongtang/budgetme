@@ -20,7 +20,7 @@ var deleteCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		err := sqldb.DeleteExpense(db, id)
 		if err != nil {
-			fmt.Println("Error removing expense:", err)
+			log.Error("Error removing expense:", err)
 			return
 		}
 		fmt.Printf("Expense ID == %d deleted successfully!\n", id)

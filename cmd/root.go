@@ -8,12 +8,17 @@ import (
 	"os"
 
 	"budgetme/cmd/expenses"
+	"budgetme/utils"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+)
+
+var log = utils.GetLogger()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -66,7 +71,7 @@ func initConfig() {
 	} else {
 		home, err := os.UserHomeDir()
 		if err != nil {
-			fmt.Println("Error getting home dir: ", err)
+			log.Error("Error getting home dir: ", err)
 			return
 		}
 		path := fmt.Sprintf("%s\\Desktop\\BudgetMe\\config_files", home)
@@ -78,7 +83,7 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
 	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println("error reading config file: ", err)
+		log.Error("error reading config file: ", err)
 		return
 	}
 }

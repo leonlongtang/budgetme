@@ -2,10 +2,11 @@ package expenses
 
 import (
 	"budgetme/sqldb"
+	"budgetme/utils" // Ensure this points to your utils package
 	"database/sql"
-	"fmt"
 	"os"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -14,6 +15,7 @@ var (
 	db        *sql.DB
 	direction string
 	orderBy   string
+	log       *logrus.Logger
 )
 
 // expensesCmd represents the expenses command
@@ -24,16 +26,15 @@ var ExpensesCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		err := cmd.Help()
 		if err != nil {
-			// You can either log the error or handle it in some meaningful way
-			fmt.Println("Error displaying help:", err)
+			log.Error("Error displaying help: ", err)
 		}
-
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		log = utils.GetLogger() // Initialize the logger
 		var err error
 		db, err = sqldb.InitDB() // Initialize the DB at the root level
 		if err != nil {
-			fmt.Println("Failed to initialize the database:", err)
+			log.Fatal("Failed to initialize the database: ", err)
 			os.Exit(1)
 		}
 		direction = viper.GetString("direction")
@@ -42,6 +43,7 @@ var ExpensesCmd = &cobra.Command{
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		if db != nil {
 			db.Close() // Close the DB connection when the CLI app finishes
+			log.Info("Database connection closed successfully.")
 		}
 	},
 }
