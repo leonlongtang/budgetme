@@ -3,7 +3,6 @@ package expenses
 import (
 	"budgetme/sqldb"
 	"budgetme/utils" // Ensure this points to your utils package
-	"database/sql"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -12,7 +11,7 @@ import (
 )
 
 var (
-	db        *sql.DB
+	db        *sqldb.Database
 	direction string
 	orderBy   string
 	log       *logrus.Logger
@@ -30,9 +29,11 @@ var ExpensesCmd = &cobra.Command{
 		}
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		log = utils.GetLogger() // Initialize the logger
+		log = utils.GetLogger()
+
+		// Initialize the DB connection as part of the Database struct
 		var err error
-		db, err = sqldb.InitDB() // Initialize the DB at the root level
+		db, err = sqldb.InitDB(log)
 		if err != nil {
 			log.Fatal("Failed to initialize the database: ", err)
 			os.Exit(1)
@@ -41,9 +42,9 @@ var ExpensesCmd = &cobra.Command{
 		orderBy = viper.GetString("order_by")
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-		if db != nil {
-			db.Close() // Close the DB connection when the CLI app finishes
-			log.Info("Database connection closed successfully.")
+		if db.DB != nil {
+			db.DB.Close()
+			db.Log.Info("Database connection closed successfully.")
 		}
 	},
 }

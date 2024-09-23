@@ -3,7 +3,6 @@ module budgetme
 go 1.22.3
 
 require (
-	github.com/Rhymond/go-money v1.0.14
 	github.com/mattn/go-sqlite3 v1.14.23
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.1

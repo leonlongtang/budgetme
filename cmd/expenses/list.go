@@ -1,11 +1,8 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package expenses
 
 import (
-	"budgetme/sqldb"
-	"budgetme/utils"
+	"budgetme/services"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -16,27 +13,24 @@ var listCmd = &cobra.Command{
 	Short: "List the saved expenses",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		expenses, err := sqldb.FetchExpenses(db, orderBy, direction)
+		// Initialize the service layer
+		expenseService := services.NewExpenseService(db)
+
+		// Fetch the expenses
+		expenses, err := expenseService.FetchExpenses(orderBy, direction)
 		if err != nil {
-			log.Error("Error fetching expenses", err)
+			log.Error("Error fetching expenses:", err)
+			fmt.Println("Failed to fetch expenses:", err)
 			return
 		}
-		utils.PrintExpenses(expenses)
+
+		// Print the expenses using a utility function
+		expenseService.PrintExpenses(expenses)
 	},
 }
 
 func init() {
-	listCmd.Flags().StringVarP(&orderBy, "orderBy", "o", "id", "Value to order by")
-	listCmd.Flags().StringVarP(&direction, "direction", "d", "asc", "Direction of order")
+	listCmd.Flags().StringVarP(&orderBy, "orderBy", "o", "id", "Column to order by")
+	listCmd.Flags().StringVarP(&direction, "direction", "d", "asc", "Direction of ordering")
 	ExpensesCmd.AddCommand(listCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

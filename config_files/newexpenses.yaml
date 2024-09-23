@@ -1,0 +1,131 @@
+createNew:
+  expenses:
+    - amount: 20.45
+      category: "Food"
+      date: "2024-09-01"
+    - amount: 35.00
+      category: "Entertainment"
+      date: "2024-09-02"
+    - amount: 15.75
+      category: "Transportation"
+      date: "2024-09-03"
+    - amount: 50.00
+      category: "Groceries"
+      date: "2024-09-04"
+    - amount: 12.99
+      category: "Coffee"
+      date: "2024-09-05"
+    - amount: 40.00
+      category: "Dining"
+      date: "2024-09-06"
+    - amount: 25.50
+      category: "Health"
+      date: "2024-09-07"
+    - amount: 60.20
+      category: "Groceries"
+      date: "2024-09-08"
+    - amount: 18.90
+      category: "Snacks"
+      date: "2024-09-09"
+    - amount: 22.30
+      category: "Transportation"
+      date: "2024-09-10"
+    - amount: 45.00
+      category: "Clothing"
+      date: "2024-09-11"
+    - amount: 30.75
+      category: "Books"
+      date: "2024-09-12"
+    - amount: 14.50
+      category: "Coffee"
+      date: "2024-09-13"
+    - amount: 75.25
+      category: "Dining"
+      date: "2024-09-14"
+    - amount: 85.99
+      category: "Groceries"
+      date: "2024-09-15"
+    - amount: 10.00
+      category: "Transportation"
+      date: "2024-09-16"
+    - amount: 50.00
+      category: "Health"
+      date: "2024-09-17"
+    - amount: 25.00
+      category: "Entertainment"
+      date: "2024-09-18"
+    - amount: 33.75
+      category: "Clothing"
+      date: "2024-09-19"
+    - amount: 9.99
+      category: "Coffee"
+      date: "2024-09-20"
+    - amount: 19.45
+      category: "Food"
+      date: "2024-09-21"
+    - amount: 22.99
+      category: "Snacks"
+      date: "2024-09-22"
+    - amount: 40.00
+      category: "Books"
+      date: "2024-09-23"
+    - amount: 45.50
+      category: "Groceries"
+      date: "2024-09-24"
+    - amount: 60.00
+      category: "Dining"
+      date: "2024-09-25"
+    - amount: 23.75
+      category: "Transportation"
+      date: "2024-09-26"
+    - amount: 32.50
+      category: "Entertainment"
+      date: "2024-09-27"
+    - amount: 49.00
+      category: "Clothing"
+      date: "2024-09-28"
+    - amount: 35.75
+      category: "Health"
+      date: "2024-09-29"
+    - amount: 16.50
+      category: "Food"
+      date: "2024-09-30"
+    - amount: 60.50
+      category: "Dining"
+      date: "2024-09-22"
+    - amount: 17.99
+      category: "Snacks"
+      date: "2024-09-13"
+    - amount: 25.25
+      category: "Coffee"
+      date: "2024-09-07"
+    - amount: 80.00
+      category: "Groceries"
+      date: "2024-09-09"
+    - amount: 12.75
+      category: "Transportation"
+      date: "2024-09-21"
+    - amount: 43.50
+      category: "Entertainment"
+      date: "2024-09-23"
+    - amount: 95.00
+      category: "Clothing"
+      date: "2024-09-24"
+    - amount: 100.25
+      category: "Groceries"
+      date: "2024-09-25"
+    - amount: 14.00
+      category: "Coffee"
+      date: "2024-09-26"
+    - amount: 55.99
+      category: "Dining"
+      date: "2024-09-27"
+    - amount: 18.75
+      category: "Transportation"
+      date: "2024-09-28"
+    - amount: 28.00
+      category: "Snacks"
+      date: "2024-09-29"
+    - amount: 19.50
+      category: "Health"
+      date: "2024-09-30"

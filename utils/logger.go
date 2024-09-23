@@ -1,23 +1,29 @@
 package utils
 
 import (
-	"os"
+	"sync"
 
 	"github.com/sirupsen/logrus"
 )
 
-var log = logrus.New()
+var (
+	log     *logrus.Logger
+	logOnce sync.Once
+)
 
 func InitLogger() {
-	// Set the output to stdout and format to JSON for better parsing in production
-	log.SetOutput(os.Stdout)
-	log.SetFormatter(&logrus.JSONFormatter{})
+	log = logrus.New()
 
-	// Set the default logging level to Info
-	log.SetLevel(logrus.InfoLevel)
+	// Set the output to stdout and format to JSON for better parsing in production
+	log.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
+	log.SetLevel(logrus.DebugLevel)
+
 }
 
 // Use this function to log errors, warnings, and info
 func GetLogger() *logrus.Logger {
+	logOnce.Do(InitLogger)
 	return log
 }
