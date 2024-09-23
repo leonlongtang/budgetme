@@ -6,11 +6,10 @@ import (
 	"sort"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var (
-	groupBy string
-)
+var groupBy string
 
 // reportCmd represents the report command
 var reportCmd = &cobra.Command{
@@ -19,6 +18,8 @@ var reportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// Initialize the service layer
 		expenseService := services.NewExpenseService(db)
+
+		groupBy = viper.GetString("group_by")
 
 		// Fetch and group the expenses based on the groupBy flag
 		grouped, err := expenseService.GenerateReport(groupBy)

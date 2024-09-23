@@ -18,7 +18,6 @@ var (
 	amount   float64
 	category string
 	date     string
-	config   string
 )
 
 // createNewCmd represents the createNew command
@@ -87,7 +86,6 @@ var createNewCmd = &cobra.Command{
 }
 
 func init() {
-	createNewCmd.Flags().StringVarP(&config, "file", "f", "", "Path to config file with expenses")
 	createNewCmd.Flags().Float64VarP(&amount, "amount", "a", 0.0, "Expense amount")
 	createNewCmd.Flags().StringVarP(&category, "category", "c", "", "Expense category")
 	createNewCmd.Flags().StringVarP(&date, "date", "d", "", "Expense date (YYYY-MM-DD)")

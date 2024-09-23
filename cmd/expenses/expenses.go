@@ -11,10 +11,9 @@ import (
 )
 
 var (
-	db        *sqldb.Database
-	direction string
-	orderBy   string
-	log       *logrus.Logger
+	db     *sqldb.Database
+	log    *logrus.Logger
+	config string
 )
 
 // expensesCmd represents the expenses command
@@ -31,6 +30,18 @@ var ExpensesCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		log = utils.GetLogger()
 
+		if config != "" {
+			viper.SetConfigFile(config)
+			err := viper.ReadInConfig() // Find and read the config file
+			if err != nil {
+				log.Fatalf("Error reading config file: %v", err)
+				os.Exit(1)
+			}
+			log.Infof("Config file loaded: %s", config)
+		} else {
+			log.Info("No config file provided, proceeding without it.")
+		}
+
 		// Initialize the DB connection as part of the Database struct
 		var err error
 		db, err = sqldb.InitDB(log)
@@ -38,8 +49,6 @@ var ExpensesCmd = &cobra.Command{
 			log.Fatal("Failed to initialize the database: ", err)
 			os.Exit(1)
 		}
-		direction = viper.GetString("direction")
-		orderBy = viper.GetString("order_by")
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		if db.DB != nil {
@@ -50,13 +59,6 @@ var ExpensesCmd = &cobra.Command{
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// expensesCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// expensesCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// Add a global config flag for all subcommands
+	ExpensesCmd.PersistentFlags().StringVarP(&config, "config", "c", "", "Path to config file")
 }

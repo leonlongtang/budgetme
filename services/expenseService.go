@@ -40,6 +40,7 @@ func (s *ExpenseService) FetchExpenses(orderBy, orderDirection string) ([]models
 
 	// Validate and process input, then call the database method
 	expenses, err := s.db.FetchExpenses(orderBy, orderDirection)
+	fmt.Println(orderBy)
 	if err != nil {
 		s.db.Log.Error("Service layer: Failed to fetch expenses", err)
 		return nil, fmt.Errorf("could not fetch expenses: %v", err)

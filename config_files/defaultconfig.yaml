@@ -1,2 +1,2 @@
-order_by : id
+group_by : id
 direction : asc
